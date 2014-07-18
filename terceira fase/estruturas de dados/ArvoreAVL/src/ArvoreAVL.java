@@ -1,48 +1,90 @@
-public class ArvoreAVL {
+/*
+ * Alunos: Lucas Jacques e Lucas Vieira
+ * Implementação de uma árvore AVL utilizando alocação dinâmica de memória.
+ * 
+ * Obs:
+ * Foram encontrados muitos problemas na implementação relacionados a "Null Pointer Exception"
+ * e "Stack Overflows" principalmente devido a grande utilização de recursão. Os métodos de rotação
+ * foram os mais difíceis de implementar, foi necessário buscar códigos prontos para tentar entender
+ * como deve ser feito. Existe um problema na exclusão, não conseguimos rebalancear a árvore perfeitamente.
+ * 
+ * Principal fonte de pesquisa:
+ * 	http://www.blackbam.at/blackbams-blog/2012/05/04/avl-tree-implementation-in-java/
+ */
 
+public class ArvoreAVL {
+	
+	//raiz da ArvoreAVL
 	private NodoAVL raiz;
 
+	/*
+	 * Contrutor da ArvoreAVL
+	 * Seta a raiz da arvore como null 
+	 */
 	public ArvoreAVL() {
 		raiz = null;
 	}
 	
+	/*
+	 * Busca na ArvoreAVL
+	 * Recebe um inteiro e retorna um boolean da busca na ArvoreAVL
+	 */
 	public boolean busca(int buscado) {
-		return busca(raiz, buscado);
-	}
-	
-	private boolean busca(NodoAVL nodo, int buscado) {
-		if(nodo == null) {
+		NodoAVL nodoBuscado = busca(raiz, buscado);
+		if(nodoBuscado == null) {
 			return false;
 		}
-		if(nodo.dado == buscado) {
-			return true;
-		} else if(nodo.dado > buscado) {
+		return true;
+	}
+	
+	/*
+	 * Busca na ArvoreAVL
+	 * Recebe um NodoAVL e um inteiro buscado
+	 * Retorna true caso o inteiro esteja na árvore que 
+	 * possui como raiz o NodoAVL recebido e false caso o contrário 
+	 */
+	private NodoAVL busca(NodoAVL nodo, int buscado) {
+		if(nodo == null) {
+			return null;
+		}
+		if(nodo.codigo == buscado) {
+			return nodo;
+		} else if(nodo.codigo > buscado) {
 			return busca(nodo.esquerda, buscado);
 		} else {
 			return busca(nodo.direita, buscado);
 		}
 	}
-
+	
+	/*
+	 * Recebe um inteiro e insere um NodoAVL na ArvoreAVL
+	 */
 	public void inserir(int novo) {
 		inserir(raiz, new NodoAVL(novo));
 	}
 
+	/*
+	 * Recebe dois NodoAVL, o primeiro é um pai e o 
+	 * segundo um nodo a ser inserido na subarvore que possui como raiz esse pai.  
+	 */
 	private void inserir(NodoAVL pai, NodoAVL novo) {
 		if (pai == null) {
 			raiz = novo;
 		} else {
-			if (novo.dado > pai.dado) {
+			if (novo.codigo > pai.codigo) {
 				if (pai.direita == null) {
 					pai.direita = novo;
 					novo.pai = pai;
+					//Nodo inserido, balancear
 					balanceia(pai);
 				} else {
 					inserir(pai.direita, novo);
 				}
-			} else if (novo.dado < pai.dado) {
+			} else if (novo.codigo < pai.codigo) {
 				if (pai.esquerda == null) {
 					pai.esquerda = novo;
 					novo.pai = pai;
+					//Nodo inserido, balancear					
 					balanceia(pai);
 				} else {
 					inserir(pai.esquerda, novo);
@@ -50,37 +92,53 @@ public class ArvoreAVL {
 			}
 		}
 	}
-
+	
+	/*
+	 * Recebe um NodoAVL e balanceia a ArvoreAVL que ele é raiz
+	 */
 	private void balanceia(NodoAVL atual) {
 		if (atual == null) {
 			return;
 		}
+		//calcula fator de balanceamento do NodoAVL
 		atual.fatorB = calculaFatorB(atual);
 		if (atual.fatorB == -2) {
+			//ArvoreAVL desbalanceada para direita
 			if(atual.direita.fatorB <= 0) {
+				//ArvoreAVL desbalanceada em "Zig-Zig" rotação simples
 				if (atual == raiz) {
 					raiz = rotacaoEsquerda(atual);
 				} else {
 					atual = rotacaoEsquerda(atual);
 				}
 			}else {
+				//ArvoreAVL desbalanceada em "Zig-Zag" rotação dupla
 				atual = rotacaoDireitaEsquerda(atual);
 			}
 		} else if (atual.fatorB == 2) {
+			//ArvoreAVL desbalanceada para esquerda
 			if (atual.esquerda.fatorB >= 0) {
+				//ArvoreAVL desbalanceada em "Zig-Zig" rotação simples
 				if (atual == raiz) {
 					raiz = rotacaoDireita(atual);
 				} else {
 					atual = rotacaoDireita(atual);
 				}
 			} else {
+				//ArvoreAVL desbalanceada em "Zig-Zag" rotação dupla
 				atual = rotacaoEsquerdaDireita(atual);
 			}
 		} else {
+			//NodoAVL não está desbalanceado, balancear pai
 			balanceia(atual.pai);
 		}
 	}
 
+	/*
+	 * Recebe a raiz de uma subárvore desbalanceada e faz
+	 * um giro para a direita
+	 * Retorna a raiz da nova subarvore, agora balanceada
+	 */
 	private NodoAVL rotacaoDireita(NodoAVL raizVelha) {
 		NodoAVL novaRaiz = raizVelha.esquerda;
 		novaRaiz.pai = raizVelha.pai;
@@ -102,6 +160,11 @@ public class ArvoreAVL {
 		return novaRaiz;
 	}
 
+	/*
+	 * Recebe a raiz de uma subárvore desbalanceada e faz
+	 * um giro para a esquerda
+	 * Retorna a raiz da nova subarvore, agora balanceada
+	 */
 	private NodoAVL rotacaoEsquerda(NodoAVL raizVelha) {
 		NodoAVL novaRaiz = raizVelha.direita;
 		novaRaiz.pai = raizVelha.pai;
@@ -123,16 +186,31 @@ public class ArvoreAVL {
 		return novaRaiz;
 	}
 
+	/*
+	 * Recebe a raiz de uma subárvore desbalanceada em "Zig-Zag",
+	 * faz um giro para a esquerda na subárvore imediata a essa subarvore.
+	 * Retorna a rotacao para a direita da subárvore desbalanceada agora em "Zig-Zig"
+	 */
 	private NodoAVL rotacaoEsquerdaDireita(NodoAVL raizVelha) {
 		raizVelha.esquerda = rotacaoEsquerda(raizVelha.esquerda);
 		return rotacaoDireita(raizVelha);
 	}
 
+	/*
+	 * Recebe a raiz de uma subárvore desbalanceada em "Zig-Zag",
+	 * faz um giro para a direita na subárvore imediata a essa subarvore.
+	 * Retorna a rotacao para a esquerda da subárvore desbalanceada agora em "Zig-Zig"
+	 */
 	private NodoAVL rotacaoDireitaEsquerda(NodoAVL raizVelha) {
 		raizVelha.direita = rotacaoDireita(raizVelha.direita);
 		return rotacaoEsquerda(raizVelha);
 	}
 
+	/*
+	 * Recebe um NodoAVL
+	 * Calcula a altura desse NodoAVL recursivamente
+	 * Retorna a altura
+	 */
 	private int calculaAltura(NodoAVL nodo) {
 		if (nodo == null) {
 			return -1;
@@ -148,33 +226,131 @@ public class ArvoreAVL {
 					calculaAltura(nodo.direita));
 		}
 	}
-
+	
+	/*
+	 * Recebe um NodoAVL
+	 * Calcula as alturas dos filhos
+	 * Retorna a diferença das alturas como fator de balanceamento
+	 */
 	private int calculaFatorB(NodoAVL nodo) {
 		int alturaEsquerda = calculaAltura(nodo.esquerda);
 		int alturaDireita = calculaAltura(nodo.direita);
 		return alturaEsquerda - alturaDireita;
 	}
 
+	/*
+	 * Método utilizado para "printar" a arvore em pre-order e poder
+	 * reconstrui-la verificando se os balanceamentos funcionaram
+	 * como esperado
+	 */
 	public void printPreOrder() {
 		printPreOrder(raiz);
 	}
 
+	/*
+	 * Método que "printa" os NodoAVL's em pre-order recursivamente
+	 */
 	private void printPreOrder(NodoAVL nodo) {
 		if (nodo != null) {
-			System.out.println(nodo.dado);
+			System.out.printf(nodo.codigo + " ");
 			printPreOrder(nodo.esquerda);
 			printPreOrder(nodo.direita);
 		}
 	}
-
-	public static void main(String[] args) {
-		ArvoreAVL avl = new ArvoreAVL();
-		for(int i = 0; i < 100000; i++) {
-			System.out.println(i);
-			avl.inserir( (int) (Math.random() * 1000000));
+	
+	/*
+	 * Recebe um inteiro para excluir da ArvoreAVL
+	 * Procura o inteira na árvore, caso esteja presente
+	 * chama o metodo de exclusao enviando o NodoAVL a excluir
+	 */
+	public void excluir(int excluido) {
+		NodoAVL aExcluir = busca(raiz, excluido);
+		if(aExcluir != null) {
+			excluir(aExcluir);
 		}
-		avl.printPreOrder();
-		System.out.println(avl.busca(40));
 	}
-
+	
+	/*
+	 * Recebe um NodoAVL a excluir
+	 * Observa todos os casos de "status" de um nodo e procede com a exclusão do mesmo
+	 */
+	private void excluir(NodoAVL aExcluir) {
+		if(aExcluir.esquerda == null && aExcluir.direita == null) {
+			if(aExcluir.pai == null) {
+				//Arvore só possui raiz
+				raiz = null;
+				aExcluir = null;
+			} else {
+				//aExcluir é folha
+				int codigo = aExcluir.codigo;
+				if(aExcluir.pai.codigo > codigo) {
+					aExcluir.pai.esquerda = null;
+					aExcluir = null;
+				} else {
+					aExcluir.pai.direita = null;
+					aExcluir = null;
+				}
+			}
+		} else if(aExcluir.esquerda == null) {
+			//Não possui filho à esquerda
+			if(aExcluir.pai == null) {
+				//aExcluir é raiz
+				raiz = aExcluir.direita;
+				raiz.pai = null;
+			} else {				
+				aExcluir.direita.pai = aExcluir.pai;
+				aExcluir.pai.direita = aExcluir.direita;
+			}
+			aExcluir = null;
+		} else if(aExcluir.direita == null) {
+			if(aExcluir.pai == null) {
+				//aExcluir é raiz
+				raiz = aExcluir.esquerda;
+				raiz.pai = null;
+			} else {
+				aExcluir.esquerda.pai = aExcluir.pai;
+				aExcluir.pai.esquerda = aExcluir.esquerda;
+			}
+			aExcluir = null;
+		} else {
+			if(aExcluir.pai == null) {
+				//raiz
+				raiz = aExcluir.direita;
+				NodoAVL ultimoEsquerda = buscarUltimoNodoEsquerda(aExcluir.direita);
+				ultimoEsquerda.esquerda = aExcluir.esquerda;
+				aExcluir = null;
+				raiz.pai = null;
+			} else {
+				int codigo = aExcluir.codigo;
+				if(codigo > aExcluir.pai.codigo) {
+					//"Ligar" na direita do pai do aExcluir
+					aExcluir.pai.direita = aExcluir.direita;
+					aExcluir.direita.pai = aExcluir.pai;
+					NodoAVL ultimoEsquerda = buscarUltimoNodoEsquerda(aExcluir.direita);
+					ultimoEsquerda.esquerda = aExcluir.esquerda;
+				} else {
+					//"Ligar" na esquerda do pai do aExcluir
+					aExcluir.pai.esquerda = aExcluir.direita;
+					aExcluir.direita.pai = aExcluir.pai;
+					NodoAVL ultimoEsquerda = buscarUltimoNodoEsquerda(aExcluir.direita);
+					ultimoEsquerda.esquerda = aExcluir.esquerda;
+				}
+				aExcluir = null;
+			}
+		}
+		//Tentativa de balanceamento, não é perfeita
+		balanceia(buscarUltimoNodoEsquerda(raiz));
+	}
+	
+	/*
+	 * Recebe um NodoAVL raiz de uma sub árvore
+	 * Retorna o ultimo filho da esquerda dessa sub árvore
+	 */
+	private NodoAVL buscarUltimoNodoEsquerda(NodoAVL raizSubArvore) {
+		if(raizSubArvore.esquerda == null) {
+			return raizSubArvore;
+		} else {
+			return buscarUltimoNodoEsquerda(raizSubArvore.esquerda);
+		}
+	}
 }
