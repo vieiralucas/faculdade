@@ -1,10 +1,16 @@
+/*
+Exercício 5 Modifique sua solução do Exercício 4 para que o filho também
+possa enviar dados ao processo pai (dica: será necessário criar um
+outro pipe para isso). Para cada um dos números inteiros recebidos do
+processo pai, o processo filho deverá somar 10 ao valor recebido e então
+deverá retornar o novo valor ao processo pai. Os valores recebidos pelo
+processo filho assim como os novos valores recebidos pelo processo pai
+deverão ser impressos na tela pelos respectivos processos.
+*/
+
 #include <unistd.h>
 #include <sys/types.h>
 #include <stdio.h>
-
-  /*
-    posicao 0 eh o receptor e 1 eh o enviador
-  */
 
 int main() {
   

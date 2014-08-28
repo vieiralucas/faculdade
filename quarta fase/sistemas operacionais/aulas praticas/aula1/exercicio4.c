@@ -1,10 +1,12 @@
+/*
+Exercício 4 Escreva um programa em C onde o processo pai cria um processo
+filho o qual estabelece um pipe de comunicação com ele. O processo pai
+deverá enviar 3 números inteiros ao processo filho através do pipe. O
+processo filho deverá imprimir os números recebidos na tela.
+*/
 #include <unistd.h>
 #include <sys/types.h>
 #include <stdio.h>
-
-  /*
-    posicao 0 eh o receptor e 1 eh o enviador
-  */
 
 int main() {
   
