@@ -1,3 +1,21 @@
+/*
+* Trabalho 1
+* Produto escalar concorrente usando threads
+* INE5611 - Sistemas Operacionais
+* Prof. Márcio Castro
+* 2014/2
+* Grupo: Lucas Jacques, Lucas Vieira
+* 
+* Enunciado:
+* 
+* O primeiro trabalho da disciplina de Sistemas Operacionais consiste em implementar
+* o produto escalar entre dois vetores de inteiros (obrigatoriamente do
+* mesmo tamanho) de forma concorrente utilizando a linguagem C e a biblioteca
+* POSIX Threads. Os dois parâmetros de entrada são o número de threads
+* trabalhadoras – worker threads (NTHREADS) e o tamanho dos veto-
+* res (VECSIZE).
+*/
+
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
