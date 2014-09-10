@@ -54,8 +54,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // alocando memoria para os vetores dinamicos 
-    vet1 = malloc(vetSize * sizeof(int)), vet2 = malloc(vetSize * sizeof(int));
+    vet1 = malloc(vetSize * sizeof(int)), vet2 = malloc(vetSize * sizeof(int)); // alocando memoria para os vetores dinamicos 
     
     populaVets(); // populando vetores com inteiros aleatorios
     printVets(); // imprimindo os vetores
@@ -66,10 +65,12 @@ int main(int argc, char *argv[]) {
     int nValPerThr = vetSize / nThreads; // numero de valores por thread
     int resto = vetSize % nThreads; // posicoes que sobram 
     pthread_args args[nThreads]; // instanciando a struct pthread_args
-    if(nValPerThr == 0) {
-        nThreads = resto;
+
+    if(nValPerThr == 0) { // se forem solicitadas mais threads que posições nos vetores
+        nThreads = resto; // limita a quantidade de threads pro tamanho do vetor
     }
-    threads = malloc(nThreads * sizeof(pthread_t));
+
+    threads = malloc(nThreads * sizeof(pthread_t)); // alocando memoria para o vetor de threads
     for(int i = 0; i < nThreads; i++) {
         args[i].id = i + 1; // define o id da thread
         args[i].start = i * (args[i - 1].end - args[i - 1].start); // atribui a args.start a posicao de start
