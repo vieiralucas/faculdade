@@ -66,20 +66,24 @@ int main(int argc, char *argv[]) {
     int resto = vetSize % nThreads; // posicoes que sobram 
     pthread_args args[nThreads]; // instanciando a struct pthread_args
 
-    if(nValPerThr == 0) { // se forem solicitadas mais threads que posições nos vetores
-        nThreads = resto; // limita a quantidade de threads pro tamanho do vetor
+    if(nThreads > vetSize) { // se forem solicitadas mais threads que posições nos vetores
+        nThreads = vetSize; // limita a quantidade de threads pro tamanho do vetor
+        resto = 0; // zera resto para impedir atribuição de mais posicoes desnecessarias para threads
+        nValPerThr = 1; // como foram solicitadas mais threads que posicoes, serao criadas 1 thread para cada posicao
     }
 
     threads = malloc(nThreads * sizeof(pthread_t)); // alocando memoria para o vetor de threads
+    int start = 0; // variavel que marca a posicao de start
     for(int i = 0; i < nThreads; i++) {
         args[i].id = i + 1; // define o id da thread
-        args[i].start = i * (args[i - 1].end - args[i - 1].start); // atribui a args.start a posicao de start
-        args[i].end = args[i].start + nValPerThr; // explicação na linha de baixo
-        // atribui a args.end a posicao de end que a principio devera ser start + numero de valores por thread 
+        args[i].start = start; // atribui a args.start a posicao de start
+        args[i].end = args[i].start + nValPerThr; // atribui a args.end a posicao de end que a principio devera ser start + numero de valores por thread 
+        start += nValPerThr;
         if(resto > 0) { // se existir resto 
             args[i].end++; // atribui mais uma posicao para essa thread
             pthread_create(&threads[i], NULL, goThread, (void *) &args[i]); // cria a thread
             resto--; // decrementa resto, pois agora resta uma posicao a menos
+            start++; // incrementa start para que a proxima thread comece da proxima posicao
         } else { // se não existir resto
             pthread_create(&threads[i], NULL, goThread, (void *) &args[i]); // nao há resto, apenas cria a thread
         }
