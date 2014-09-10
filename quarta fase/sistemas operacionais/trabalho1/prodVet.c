@@ -81,12 +81,11 @@ int main(int argc, char *argv[]) {
         start += nValPerThr;
         if(resto > 0) { // se existir resto 
             args[i].end++; // atribui mais uma posicao para essa thread
-            pthread_create(&threads[i], NULL, goThread, (void *) &args[i]); // cria a thread
             resto--; // decrementa resto, pois agora resta uma posicao a menos
             start++; // incrementa start para que a proxima thread comece da proxima posicao
-        } else { // se não existir resto
-            pthread_create(&threads[i], NULL, goThread, (void *) &args[i]); // nao há resto, apenas cria a thread
         }
+        // cria a thread
+        pthread_create(&threads[i], NULL, goThread, (void *) &args[i]); // nao há resto, apenas cria a thread
     }
     // termino do codigo que cria as threads
 
