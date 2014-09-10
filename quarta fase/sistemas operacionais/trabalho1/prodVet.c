@@ -56,7 +56,6 @@ int main(int argc, char *argv[]) {
 
     // alocando memoria para os vetores dinamicos 
     vet1 = malloc(vetSize * sizeof(int)), vet2 = malloc(vetSize * sizeof(int));
-    threads = malloc(nThreads * sizeof(pthread_t));
     
     populaVets(); // populando vetores com inteiros aleatorios
     printVets(); // imprimindo os vetores
@@ -67,17 +66,18 @@ int main(int argc, char *argv[]) {
     int nValPerThr = vetSize / nThreads; // numero de valores por thread
     int resto = vetSize % nThreads; // posicoes que sobram 
     pthread_args args[nThreads]; // instanciando a struct pthread_args
-    int start = -nValPerThr; // posicao dos vetores de start antes do for
+    if(nValPerThr == 0) {
+        nThreads = resto;
+    }
+    threads = malloc(nThreads * sizeof(pthread_t));
     for(int i = 0; i < nThreads; i++) {
         args[i].id = i + 1; // define o id da thread
-        start += nValPerThr;  // soma com start o numero de valores por thread
-        args[i].start = start; // atribui a args.start a posicao de start
-        args[i].end = start + nValPerThr; // explicação na linha de baixo
+        args[i].start = i * (args[i - 1].end - args[i - 1].start); // atribui a args.start a posicao de start
+        args[i].end = args[i].start + nValPerThr; // explicação na linha de baixo
         // atribui a args.end a posicao de end que a principio devera ser start + numero de valores por thread 
         if(resto > 0) { // se existir resto 
             args[i].end++; // atribui mais uma posicao para essa thread
             pthread_create(&threads[i], NULL, goThread, (void *) &args[i]); // cria a thread
-            start++; // incrementa start para corrigir
             resto--; // decrementa resto, pois agora resta uma posicao a menos
         } else { // se não existir resto
             pthread_create(&threads[i], NULL, goThread, (void *) &args[i]); // nao há resto, apenas cria a thread
