@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 
     pthread_mutex_init(&mutex, NULL); // inicia mutex
 
-    // codigo para instanciar as threads e calcular suas posicoes
+    // codigo para criar as threads e calcular suas posicoes
     int nValPerThr = vetSize / nThreads; // numero de valores por thread
     int resto = vetSize % nThreads; // posicoes que sobram 
     pthread_args args[nThreads]; // instanciando a struct pthread_args
@@ -88,6 +88,7 @@ int main(int argc, char *argv[]) {
             pthread_create(&threads[i], NULL, goThread, (void *) &args[i]); // nao há resto, apenas cria a thread
         }
     }
+    // termino do codigo que cria as threads
 
     // espera todas as threads finalizarem
     for(int i = 0; i < nThreads; i++)
