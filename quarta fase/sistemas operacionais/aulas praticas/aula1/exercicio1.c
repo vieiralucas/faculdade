@@ -1,8 +1,8 @@
 /*
-Exercício 2 Escreva um programa em C no qual o processo pai cria 4 pro-
-cessos filhos. Os processos filhos deverão imprimir na tela “Processo filho
-XX”, onde XX é o PID do processo. Dica: utilize a função getpid() para
-retornar o PID do processo.
+Exercício 1 Escreva um programa em C que cria um processo utilizando a
+chamada de sistema fork(). Ambos os processos pai e filho deverão impri-
+mir na tela a frase "Novo processo criado!". Você deverá  utilizar apenas
+um priintf().
 */
 #include <unistd.h>
 #include <sys/types.h>
