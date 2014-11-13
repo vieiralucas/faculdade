@@ -93,12 +93,13 @@ void removerFuncionario() {
 	scanf("%s", nome);
 	fseek(data, 0, SEEK_SET);
 	fseek(placeholder, 0, SEEK_SET);
-	do {
-		status = fread(&buffer, sizeof(struct funcionario), 1, data);
+	fread(&buffer, sizeof(struct funcionario), 1, data);
+	while (!feof(data)) {
 		if (strcmp(nome, buffer.nome) != 0) {
 			fwrite(&buffer, sizeof(struct funcionario), 1, placeholder);
 		}
-	} while(status != 0);
+		fread(&buffer, sizeof(struct funcionario), 1, data);
+	}
 	remove("dados");
 	rename(".dados", "dados");
 	data = placeholder;
@@ -108,8 +109,8 @@ void mediaSalarialSexo() {
 	float sumMasc = 0, sumFem = 0;
 	int countMasc = 0, countFem = 0, status;
 	fseek(data, 0, SEEK_SET);
-	do {
-		status = fread(&buffer, sizeof(struct funcionario), 1, data);
+	fread(&buffer, sizeof(struct funcionario), 1, data);
+	while (!feof(data)) {
 		if (buffer.sexo == 'm') {
 			sumMasc += buffer.salario;
 			countMasc++;
@@ -117,7 +118,8 @@ void mediaSalarialSexo() {
 			sumFem += buffer.salario;
 			countFem++;
 		}
-	} while(status != 0);
+		fread(&buffer, sizeof(struct funcionario), 1, data);
+	}
 	float mediaMasc = sumMasc / countMasc;
 	float mediaFem = sumFem / countFem;
 	printf("Média salarial:\nMasculina: %.2f\nFeminina: %.2f\n", mediaMasc, mediaFem);
@@ -127,8 +129,8 @@ void exportarDados() {
 	FILE *output = fopen("dadosTexto", "w");
 	int status;
 	fseek(data, 0, SEEK_SET);
-	do {
-		status = fread(&buffer, sizeof(struct funcionario), 1, data);
+	fread(&buffer, sizeof(struct funcionario), 1, data);
+	while (!feof(data)) {
 		fprintf(output, "%s\n", buffer.nome);
 		fprintf(output, " Data Nascimento: %s\n", buffer.datanasc);
 		if(buffer.sexo == 'm') {
@@ -137,6 +139,8 @@ void exportarDados() {
 			fprintf(output, " Sexo: Feminino\n");
 		}
 		fprintf(output, " Salário: %.2f\n", buffer.salario);
-	} while(status != 0);
+		fread(&buffer, sizeof(struct funcionario), 1, data);
+	}
+	printf("Dados exportados para dadosTexto\n");
 	fclose(output);
 }
