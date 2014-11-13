@@ -1,6 +1,10 @@
 /**
-*
-*/
+ * Trabalho 2 - Arquivos
+ *
+ * Alunos: Lucas jacques e Lucas Vieira
+ * Professor: Márcio Castro
+ * Disciplina INE5611 - Sistemas Operacionais
+ */
 
 #include <stdio.h>
 #include <string.h>
