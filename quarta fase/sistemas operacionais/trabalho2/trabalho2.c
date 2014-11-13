@@ -1,3 +1,7 @@
+/**
+*
+*/
+
 #include <stdio.h>
 #include <string.h>
 
@@ -20,7 +24,7 @@ void exportarDados();
 
 int main(int argc, char *argv[]) {
 
-	data = fopen("dados", "w+b");
+	data = fopen("dados", "a+b");
 
 	if (data == NULL) {
 		printf("Erro ao abrir o arquivo de dados.\n");
